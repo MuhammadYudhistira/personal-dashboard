@@ -24,16 +24,17 @@ model User {
   id               String            @id @default(auto()) @map("_id") @db.ObjectId
   email            String            @unique
   name             String?
+  password         String? 
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   
-  // relations (MongoDB uses embedded documents or refs; here we use refs)
   todos            Todo[]            @relation("UserTodos")
   notes            Note[]            @relation("UserNotes")
   agendaEvents     AgendaEvent[]     @relation("UserAgendaEvents")
   countdownEvents  CountdownEvent[]  @relation("UserCountdownEvents")
   readingBooks     ReadingBook[]     @relation("UserReadingBooks")
   watchingItems    WatchingItem[]    @relation("UserWatchingItems")
+  @@map("users")
 }
 
 model Todo {
@@ -46,6 +47,7 @@ model Todo {
   // reference
   userId String @db.ObjectId
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserTodos")
+  @@map("todos")
 }
 
 model Note {
@@ -56,6 +58,7 @@ model Note {
 
   userId String @db.ObjectId
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserNotes")
+  @@map("notes")
 }
 
 model AgendaEvent {
@@ -68,6 +71,7 @@ model AgendaEvent {
 
   userId String @db.ObjectId
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserAgendaEvents")
+  @@map("agenda_events")
 }
 
 model CountdownEvent {
@@ -77,6 +81,7 @@ model CountdownEvent {
 
   userId String @db.ObjectId
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserCountdownEvents")
+  @@map("countdown_events")
 }
 
 model ReadingBook {
@@ -92,6 +97,7 @@ model ReadingBook {
   userId String @db.ObjectId
   user   User            @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserReadingBooks")
   progresses ReadingProgress[] @relation("BookProgress")
+  @@map("reading_books")
 }
 
 model ReadingProgress {
@@ -101,6 +107,7 @@ model ReadingProgress {
 
   bookId String @db.ObjectId
   book   ReadingBook @relation(fields: [bookId], references: [id], onDelete: Cascade, name: "BookProgress")
+  @@map("reading_progresses")
 }
 
 model WatchingItem {
@@ -112,4 +119,5 @@ model WatchingItem {
 
   userId String   @db.ObjectId
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserWatchingItems")
+  @@map("watching_items")
 }

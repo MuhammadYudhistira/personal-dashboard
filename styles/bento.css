@@ -1,0 +1,156 @@
+/* -------------------------------------------------------------------------- */
+/*  Bento Grid – Exact layout from original HTML mock‑up                     */
+/* -------------------------------------------------------------------------- */
+
+.bento-grid {
+    display: grid;
+    gap: 1rem; /* Mobile gap */
+}
+
+/* Tablet ≥640 px */
+@media (min-width: 200px) {
+    .bento-grid {
+        gap: 1.5rem;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas:
+            "weather-today weather-today"
+            "spotify spotify"
+            "agenda agenda"
+            "forecast forecast"
+            "reading reading"
+            "notes notes"
+            "todos todos    "
+            "watching watching"
+            "countdown countdown";
+    }
+}
+
+/* Tablet ≥640 px */
+@media (min-width: 640px) {
+    .bento-grid {
+        gap: 1.5rem;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-areas:
+            "weather-today spotify"
+            "agenda agenda"
+            "forecast forecast"
+            "reading reading"
+            "todos notes"
+            "watching watching"
+            "countdown countdown";
+    }
+}
+
+/* Desktop ≥1024 px */
+@media (min-width: 1024px) {
+    .bento-grid {
+        gap: 2rem;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-areas:
+            "weather-today agenda agenda"
+            "spotify       agenda agenda"
+            "forecast      forecast forecast"
+            "todos         reading reading"
+            "notes         reading reading"
+            "countdown     watching watching";
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Grid‑area assignments for each widget                                     */
+/* -------------------------------------------------------------------------- */
+
+.widget-weather-today {
+    grid-area: weather-today;
+}
+.widget-forecast {
+    grid-area: forecast;
+}
+.widget-agenda {
+    grid-area: agenda;
+}
+.widget-todos {
+    grid-area: todos;
+}
+.widget-notes {
+    grid-area: notes;
+}
+.widget-reading {
+    grid-area: reading;
+}
+.widget-countdown {
+    grid-area: countdown;
+}
+.widget-watching {
+    grid-area: watching;
+}
+.widget-spotify {
+    grid-area: spotify;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Spotify card dynamic blur background                                      */
+/* -------------------------------------------------------------------------- */
+
+.spotify-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    filter: blur(20px) brightness(0.6);
+    z-index: -1;
+    transform: scale(1.1);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  No‑scrollbar utility (used by WatchingList + Forecast)                    */
+/* -------------------------------------------------------------------------- */
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Focus ring + hover lift for cards                                         */
+/* -------------------------------------------------------------------------- */
+
+.widget-card {
+    transition: transform 0.7s ease, box-shadow 0.7s ease;
+}
+.widget-card:hover {
+    transform: translateY(-4px);
+}
+.widget-card:focus-visible {
+    outline: 2px solid #247c6d;
+    outline-offset: 4px;
+    box-shadow: 0 0 0 4px rgba(36, 124, 109, 0.5);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Custom progress bar (ReadingTracker)                                      */
+/* -------------------------------------------------------------------------- */
+
+progress {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+}
+progress::-webkit-progress-bar {
+    background-color: #031c26;
+    border-radius: 9999px;
+}
+progress::-webkit-progress-value {
+    background-color: #247c6d;
+    border-radius: 9999px;
+}
+progress::-moz-progress-bar {
+    background-color: #247c6d;
+    border-radius: 9999px;
+}
