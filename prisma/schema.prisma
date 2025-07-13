@@ -1,0 +1,115 @@
+// schema.prisma — Personal Dashboard (MongoDB)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum WatchingStatus {
+  WATCHING
+  COMPLETED
+  PLANNED
+}
+
+enum BookStatus {
+  READING
+  COMPLETED
+  ON_HOLD
+}
+
+model User {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  email            String            @unique
+  name             String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  
+  // relations (MongoDB uses embedded documents or refs; here we use refs)
+  todos            Todo[]            @relation("UserTodos")
+  notes            Note[]            @relation("UserNotes")
+  agendaEvents     AgendaEvent[]     @relation("UserAgendaEvents")
+  countdownEvents  CountdownEvent[]  @relation("UserCountdownEvents")
+  readingBooks     ReadingBook[]     @relation("UserReadingBooks")
+  watchingItems    WatchingItem[]    @relation("UserWatchingItems")
+}
+
+model Todo {
+  id        String   @id @default(auto()) @map("_id")  @db.ObjectId
+  text      String
+  completed Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  // reference
+  userId String @db.ObjectId
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserTodos")
+}
+
+model Note {
+  id        String   @id @default(auto()) @map("_id")  @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @db.ObjectId
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserNotes")
+}
+
+model AgendaEvent {
+  id          String   @id @default(auto()) @map("_id")  @db.ObjectId
+  title       String
+  description String?
+  start       DateTime
+  end         DateTime
+  location    String?
+
+  userId String @db.ObjectId
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserAgendaEvents")
+}
+
+model CountdownEvent {
+  id        String   @id @default(auto()) @map("_id")  @db.ObjectId
+  title     String
+  targetAt  DateTime
+
+  userId String @db.ObjectId
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserCountdownEvents")
+}
+
+model ReadingBook {
+  id          String         @id @default(auto()) @map("_id")  @db.ObjectId
+  title       String
+  author      String?
+  coverUrl    String?
+  totalPages  Int
+  status      BookStatus     @default(READING)
+  startedAt   DateTime       @default(now())
+  finishedAt  DateTime?
+
+  userId String @db.ObjectId
+  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserReadingBooks")
+  progresses ReadingProgress[] @relation("BookProgress")
+}
+
+model ReadingProgress {
+  id         String   @id @default(auto()) @map("_id")  @db.ObjectId
+  pageNumber Int
+  notedAt    DateTime @default(now())
+
+  bookId String @db.ObjectId
+  book   ReadingBook @relation(fields: [bookId], references: [id], onDelete: Cascade, name: "BookProgress")
+}
+
+model WatchingItem {
+  id        String         @id @default(auto()) @map("_id")  @db.ObjectId
+  title     String
+  coverUrl  String?
+  status    WatchingStatus @default(PLANNED)
+  type      String?
+
+  userId String   @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, name: "UserWatchingItems")
+}
